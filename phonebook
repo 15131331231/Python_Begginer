@@ -1,0 +1,228 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Feb 15 20:07:07 2020
+
+@author: mumu
+"""
+
+import os
+import sys
+import time
+import pickle
+
+"""
+Author：Designed by 秦振勇
+Appname：通讯录
+Date：2020-02-16
+Version：1.0
+"""
+filename="C:\\Users\\mumu\\Phonebook.data"
+
+class Contacts:
+    def __init__(self,name,sex,phonenum,mail,addr,comp):
+        self.name=name
+        self.sex=sex
+        self.phonenum=phonenum
+        self.mail=mail
+        self.addr=addr
+        self.comp=comp
+    def Contactsinfo(self):
+        print("姓名：%s" % self.name)
+        print("性别：%s" % self.sex)
+        print("电话号码：%s" % self.phonenum)
+        print("邮箱：%s" % self.mail)
+        print("家庭地址：%s" % self.addr)
+        print("公司：%s" % self.comp)
+    def NameAdd(self,name):
+        self.name=name
+    def SexAdd(self,sex):
+        self.sex=sex
+    def PhonenumAdd(self,phonenum):
+        self.phonenum=phonenum
+    def MailAdd(self,mail):
+        self.mail=mail
+    def AddrAdd(self,addr):
+        self.addr=addr
+    def CompAdd(self,comp):
+        self.comp=comp
+def ShowMenu():
+    print('''
+          **********欢迎使用通讯录程序**********
+                  1、新增联系人
+                  2、删除联系人
+                  3、查询联系人
+                  4、编辑联系人
+                  5、显示所有联系人
+                  6、清空所有联系人
+                  7、帮助选项
+                  8、存储通讯录
+                  9、退出系统
+        ****************************************
+        ''')
+def EditMenu():
+    print('''
+    **********请输入序号进入相应选项**********
+            a、编辑联系人姓名
+            b、编辑联系人性别
+            c、编辑联系人电话号码
+            d、编辑联系人邮箱
+            e、编辑联系人地址
+            f、编辑联系人公司
+    *****************************************
+    ''')
+def GetHelp():
+    print('''
+          *****本程序是基于Python 3.7开发*****
+                参  数         信  息
+              --Version     显示版本信息
+              --Contact     开发者联系方式
+              --Info        显示帮助信息
+              ''')
+    
+def save_data():
+    with open(filename,'wb') as f:
+        pickle.dump(phonebook,f)
+        f.close()
+
+#Code below only for test.  
+#if (len(sys.argv)<2):
+#    print("通讯录：Missing Option")
+#    print("Try 'phonebook --Help' for more infomation")
+#    sys.exit()
+#if sys.argv[1].startswith('--'):
+#    opiton=sys.argv[1][2:]
+#    if option=='version':
+#        print("phonebook:Version 1.0")
+#    elif option=='help':
+#        GetHelp()
+#    elif option=='open':
+#        if len(sys.argv)<3:
+#            print('''
+#                  phonebook:Missing FILENAME
+#                  Usage:phonebook [OPTION]……[FILENAME]……
+#                  ''')
+#            sys.exit()
+#        filename=sys.argv[2]
+#        try:
+#            if os.path.exists(filename):
+#                f=file(filename)
+#                phonebook=pickle.load(f)
+#            else:
+#                phonebook={}
+#        except EOFError:
+#            phonebook={}
+        
+try:
+    if os.path.exists(filename):
+        with open(filename,'rb') as f:
+            pickle.load(f)
+            f.close()
+    else:
+        phonebook={}
+except EOFError:
+    phonebook={}
+    
+ShowMenu()
+try:
+    while True:
+        sel=int(input("请输入你的选择，按回车键确认>>>"))
+        if sel==1:
+            name=input("请输入你要添加的联系人姓名：")
+            sex=input("请输入你要添加的联系人性别：")
+            phonenum=input("请输入你要添加的联系人电话号码：")
+            mail=input("请输入你要添加的联系人邮箱：")
+            addr=input("请输入你要添加的联系人地址：")
+            comp=input("请输入你要添加的联系人公司名称：")
+            phonebook[name]=Contacts(name,sex,phonenum,mail,addr,comp)
+            print("联系人%s已保存！" % name)
+        elif sel==2:
+            namedel=input("请输入你要删除的联系人姓名：")
+            if namedel in phonebook:
+                del phonebook[namedel]
+                print("联系人：%r删除成功。" % namedel)
+            else:
+                print("你输入的姓名不存在，请确认后再重新操作。")
+        elif sel==3:
+            namefind=input("请输入你要查找的联系人姓名：")
+            if namefind in phonebook:
+                phonebook[namefind].Contactsinfo()
+            else:
+                print("你要查找的联系人不存在，请确认后重新操作。")
+        elif sel==4:
+            namechan=input("请输入你要编辑的联系人姓名：")
+            if namechan in phonebook:
+                print("当前联系人明细：")
+                phonebook[namechan].Contactsinfo()
+                EditMenu()
+                choose=input("请输入你的选择，按回车键确认>>>").lower()
+                if choose=='a':
+                    nameedit=input("请输入联系人新的姓名：")
+                    phonebook[namechan].NameAdd(nameedit)
+                elif choose=='b':
+                    namesex=input("请输入联系人新的性别：") 
+                    phonebook[namechan].SexAdd(namesex)
+                elif choose=='c':
+                    namenum=input("请输入联系人新的电话号码：")
+                    phonebook[namechan].PhonenumAdd(namenum)
+                elif choose=='d':
+                    namemail=input("请输入联系人新的电子邮箱地址：")
+                    phonebook[namechan].MailAdd(namemail)
+                elif choose=='e':
+                    nameaddr=input("请输入联系人新的地址：")
+                    phonebook[namechan].AddrAdd(nameaddr)
+                elif choose=='f':
+                    namecomp=input("请输入联系人新的工作公司：")
+                    phonebook[namechan].CompAdd(namecomp)
+            else:
+                print("你要查找的联系人不存在，请确认后重新操作。")
+        elif sel==5:
+            print("当前通讯录中所有联系人明细如下：")
+            print("-------------------------------\n")
+            for name,info in phonebook.items():
+                info.Contactsinfo()
+                print("\n-------------------------------\n")
+        elif sel==6:
+            seldel=input("你将要清空当前电话簿中所有的联系人，确认请输入Y，取消输入N。").upper()
+            if seldel=="Y":
+                phonebook.clear()
+                print("当前电话簿中的所有联系人已清空。")
+            elif seldel=="N":
+                time.sleep(3)
+                print("清空联系人操作已取消，程序将在3秒中之内返回上一级菜单。")
+            else:
+                print("请输入正确的字符。")
+                continue
+        elif sel==7:
+            GetHelp()
+            showhelp=input("请按上列帮助信息输入参数>>>").upper()
+            if showhelp=="--VERSION":
+                print("Version 1.0.0")
+            elif showhelp=="--CONTACT":
+                print('''
+                      开发者：秦振勇
+                      Mail:   15131331231@163.com
+                      ''')
+            elif showhelp=="--INFO":
+                print("本代码作测试使用，出现问题，本人不负任何责任。谢谢。")
+            else:
+                print("请输入正确的参数。")
+        elif sel==8:
+            print("数据正在存储中…………")
+            save_data()
+            time.sleep(3)
+            print("当前数据已保存！")
+        elif sel==9:
+            print("程序将在3秒钟后退出。")
+            time.sleep(3)
+            sys.exit()
+        else:
+            print("请输入1-9的数字，谢谢。")
+except EOFError:
+        print("没有内建输入，达到EOFError。")
+        time.sleep(3)
+        
+        ShowMenu()
+except ValueError:
+        print("传入无效的参数。请输入1-9之内的数字。")
+        time.sleep(3)
+        ShowMenu()
